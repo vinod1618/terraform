@@ -7,6 +7,50 @@ resource "aws_instance" "example" {
     Project = "roboshop"
 
   }
+# local exec provisioner
+
+  provisioner "local-exec" {
+    when = destroy
+    command = "echo ${self.public_ip} > inventory.ini"
+   }
+
+  provisioner "local-exec" {
+    when = destroy
+    command = "echo script-testing > inventory.ini"
+   }
+
+  provisioner "local-exec" {
+    when = destroy
+    command = "echo ${self.public_ip} > inventory.ini"
+   }
+
+# remote exec provisioner
+  connection {
+    type = "ssh"
+    user = "ec2-user"
+    password = "DevOps321"
+    host = self.public_ip
+
+  }
+  
+  provisioner "remote-exec" {
+    inline = [
+      "sudo dnf install nginx -y",
+      "sudo systemctl start nginx"
+    ]
+  } 
+
+    provisioner "remote-exec" {
+    inline = [
+      "sudo dnf install nginx -y",
+      "sudo systemctl start nginx"
+    ]
+    when = destroy
+  } 
+
+
+
+
 }
 
 resource "aws_security_group" "allow_tls" {
